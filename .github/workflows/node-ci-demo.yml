@@ -32,7 +32,7 @@ jobs:
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: ${{ secrets.SERVER_PORT || 22 }}
-          source: "server/*"
+          source: "**"
           target: "/home/${{ secrets.SERVER_USER }}/app-folder"
 
       # 2️⃣ Run deployment commands on the server
