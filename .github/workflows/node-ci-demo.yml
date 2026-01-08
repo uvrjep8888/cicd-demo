@@ -1,11 +1,12 @@
-name: Node CI Demo
+name: Node CI/CD Demo
 
 on:
   push:
-    branches: [ "master" ]
+    branches:
+      - main
 
 jobs:
-  build-and-test:
+  ci-cd:
     runs-on: ubuntu-latest
 
     steps:
@@ -19,9 +20,32 @@ jobs:
 
       - name: Install dependencies
         run: npm install
+        working-directory: server
 
       - name: Run tests
         run: npm test
+        working-directory: server
 
-      - name: Fake deploy step
-        run: echo "🚀 Deploying application..."
+      # 1️⃣ Copy files to your WSL Server via SCP
+      - name: Copy files to server
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.SERVER_IP }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: ${{ secrets.SERVER_PORT || 22 }}
+          source: "server/*"
+          target: "/home/${{ secrets.SERVER_USER }}/app-folder"
+
+      # 2️⃣ Run deployment commands on the server
+      - name: Execute remote ssh commands
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SERVER_IP }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: ${{ secrets.SERVER_PORT || 22 }}
+          script: |
+            cd /home/${{ secrets.SERVER_USER }}/app-folder/server
+            npm install --production
+            pm2 restart node-app || pm2 start index.js --name "node-app"
