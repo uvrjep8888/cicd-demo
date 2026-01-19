@@ -10,7 +10,7 @@ const server = http.createServer((req, res) => {
 	  Welcome to my page.
 	  Welcome to my Brownbag Session
 	` 
-  res.end("Welcome to my brownbag session \n");
+  res.end(responseText);
 });
 
 server.listen(port, () => {
