@@ -8,7 +8,7 @@ const server = http.createServer((req, res) => {
   const responseText = `
           Welcone to cicd tutorials.
 	  Welcome to my page.
-	  Welcome to my Brownbag Session!!!!!
+	  Welcome to my Brownbag Session!
 	` 
   res.end(responseText);
 });
